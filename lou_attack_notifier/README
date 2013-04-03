@@ -1,0 +1,8 @@
+magic number: 6550512 - 2 April 10:00:00 London time
+
+This is a script that polls LOU and checks for incoming attacks on your
+selected cities. When it detects incoming attacks it mails the coordinates of
+the target, the city of the attacker and the time of arrival of the attack.
+The script was originally intended to be used for people without defence
+ministers but can also be used to help you in sending support to players
+outside your alliance
