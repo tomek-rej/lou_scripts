@@ -18,7 +18,6 @@
         }
 
         function calculate_from_timestamp(timestamp) {
-            console.log(timestamp);
             timestamp += (1364917057 - 6570769);
             var d = new Date(timestamp * 1000);
             return d.toISOString();
@@ -56,17 +55,26 @@
         }
 
         function main() {
-            poll_incoming('28836282');
-            poll_incoming('28901822');
+            //Add city ids here. To convert coordinates to an id:
+            //y * 65536 + x
+            //poll_incoming('28836282');
+            //poll_incoming('28901822');
+            poll_incoming('22675894'); //438:346
+            poll_incoming('23134653'); //445:353
+            poll_incoming('22938044'); //444:350
         }
 
         function poll_incoming(city_id) {
             try {
-                console.log('starting')
-                var updateManager = webfrontend.net.UpdateManager.getInstance();
-                var to = new Array('lordscroggin');
+                console.log('polling incoming')
+                /**
+                 * Some variables. You can customise who to send the mail to. 
+                 */
+                var to = new Array('lordscroggin', 'notanoob69', 'jakhar', 'suzuki85', 'spartad', 'vicioussquid');
                 var subject = 'Help me!!!'
                 var url = 'http://prodgame28.lordofultima.com/233/Presentation/Service.svc/ajaxEndpoint/Poll';
+
+                var updateManager = webfrontend.net.UpdateManager.getInstance();
                 var req = new qx.io.remote.Request(url, 'POST', 'application/json');
                 var data = {
                     session: updateManager.getInstanceGuid(),
@@ -77,25 +85,24 @@
                 req.setRequestHeader('Content-Type', 'application/json');
                 req.setData(qx.lang.Json.stringify(data))
                 req.addListener('completed', function(e) {
-                    var raw = e.getContent();
-                    console.log(raw)
-                    console.log(city_id);
-                    for (var i = 0; i < raw.length; i++) {
-                        message = formulate_mail(city_id, raw[i].D.uo);
-                        console.log(message);
-                        
-                        if (message != '') {
-                            if (get_cookie('LOU' + city_id) != message) {
-                                set_cookie('LOU' + city_id, message, 1)
-                                console.log(message);
-                                send_mail(updateManager, message, to, subject)
+                    try {
+                        var raw = e.getContent();
+                        console.log(raw)
+                        for (var i = 0; i < raw.length; i++) {
+                            message = formulate_mail(city_id, raw[i].D.iuo);
+                            
+                            if (message != '') {
+                                if (get_cookie('LOU' + city_id) != message) {
+                                    set_cookie('LOU' + city_id, message, 1)
+                                    send_mail(updateManager, message, to, subject)
+                                }
                             }
                         }
                     }
+                    catch (e) {} //Sometimes there's a script error. Usually happens the first time the script is run.
                 });
                 req.send()
-                console.log('sent')
-            } catch (e) {} //For some reason the first time this script runs it dies.
+            } catch (e) {}
         }
 
         function send_mail(updateManager, msg, to, sub) {
@@ -103,16 +110,15 @@
                 mailbox = webfrontend.net.CommandManager.getInstance();
                 mailbox.sendCommand("IGMSendMsg", {
                     session:updateManager.getInstanceGuid(), target:to[i], subject:sub, body:msg
-                });
+                });s
             }
         }
 
-        setInterval(blah,60000);
+        setInterval(main,300000); //Refresh every 5 minutes (number is in millis)
 
     }
 
     function inject() {
-        console.log('injection of attack notifier');
         var s = document.createElement('script');
         s.innerHTML = "(" + attack_notifier.toString() + ")();";
         s.type = "text/javascript";
