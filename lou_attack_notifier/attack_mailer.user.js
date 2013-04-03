@@ -110,7 +110,7 @@
                 mailbox = webfrontend.net.CommandManager.getInstance();
                 mailbox.sendCommand("IGMSendMsg", {
                     session:updateManager.getInstanceGuid(), target:to[i], subject:sub, body:msg
-                });s
+                });
             }
         }
 
