@@ -16,6 +16,7 @@
 
         window.token = '' //Better not publish this live
         window.room_id = '' //Ditto
+        window.user = '' //Only if you're logged in as this user will it work.
 
         function send_request(url) {
             var xmlHttp = null;
@@ -27,6 +28,10 @@
           
 
         function update_chat() {
+            var game_user = webfrontend.data.Player.getInstance().$$user_name
+            if (game_user != window.user) {
+                return
+            }
             for (var i = 0; i < window.message_buffer.length; i++) {
                 var url_prefix = 'https://api.hipchat.com/v1/rooms/message?auth_token='
                 var url = url_prefix + window.token + '&from=' + window.users[i] + '&room_id=' + window.room_id + '&message=' + window.message_buffer[i];
